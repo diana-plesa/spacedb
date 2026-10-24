@@ -1,0 +1,18 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<section class="hero">
+    <h1>A catalog of the universe</h1>
+    <p class="lead">Browse galaxies, star systems, stars, planets, satellites and black holes, with real sky coordinates.</p>
+    <a class="btn btn-primary" href="{% url 'galaxy_list' %}">Explore galaxies</a>
+</section>
+
+<div class="stat-grid">
+    {% for label, count in counts %}
+        <div class="card stat">
+            <span class="stat-value">{{ count }}</span>
+            <span class="stat-label">{{ label }}</span>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

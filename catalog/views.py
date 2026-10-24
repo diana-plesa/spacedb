@@ -1,6 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Galaxy
+from .models import Galaxy, StarSystem, Star, Planet, Satellite, BlackHole
 from .forms import GalaxyForm
+
+
+def home(request):
+    counts = [
+        ('Galaxies', Galaxy.objects.count()),
+        ('Star systems', StarSystem.objects.count()),
+        ('Stars', Star.objects.count()),
+        ('Planets', Planet.objects.count()),
+        ('Satellites', Satellite.objects.count()),
+        ('Black holes', BlackHole.objects.count()),
+    ]
+    return render(request, 'catalog/home.html', {'counts': counts})
 
 
 def galaxy_list(request):

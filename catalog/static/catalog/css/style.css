@@ -1,0 +1,279 @@
+/* ---------- Colors and sizes used everywhere ---------- */
+:root {
+    --bg: #070a14;
+    --surface: rgba(20, 26, 46, 0.75);
+    --surface-solid: #141a2e;
+    --border: rgba(140, 160, 255, 0.15);
+    --text: #e6e9f5;
+    --muted: #8e97b8;
+    --accent: #7c8cff;
+    --accent-2: #5ee1e6;
+    --danger: #ff6b81;
+    --radius: 12px;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-heading: "Space Grotesk", "Inter", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+}
+
+/* Starfield: a few layers of tiny dots plus a soft nebula glow, fixed behind the page */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 120px 80px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1.5px 1.5px at 200px 150px, #cfd6ff, transparent),
+        radial-gradient(1px 1px at 60px 190px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 170px 230px, #fff, transparent);
+    background-size: 250px 250px;
+    opacity: 0.5;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+        radial-gradient(ellipse at 15% 10%, rgba(124, 140, 255, 0.18), transparent 50%),
+        radial-gradient(ellipse at 85% 80%, rgba(94, 225, 230, 0.10), transparent 50%);
+}
+
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    line-height: 1.2;
+    margin: 0 0 0.5rem;
+}
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.25rem; }
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+}
+
+main.container { flex: 1; padding-top: 2rem; padding-bottom: 3rem; }
+
+.muted { color: var(--muted); }
+
+/* ---------- Header / navigation ---------- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(7, 10, 20, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 60px;
+}
+
+.brand {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--text);
+}
+.brand:hover { text-decoration: none; color: var(--accent-2); }
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    display: block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    color: var(--muted);
+    font-weight: 500;
+}
+.nav-links a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
+.nav-links a.active { color: var(--text); background: rgba(124, 140, 255, 0.18); }
+
+.site-footer {
+    padding: 1.5rem 1.25rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* ---------- Building blocks ---------- */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    backdrop-filter: blur(6px);
+}
+
+.page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.page-header h1 { margin: 0; }
+.page-header p { margin: 0.25rem 0 0; }
+
+.back-link { margin: 0 0 0.5rem; font-size: 0.9rem; }
+
+.actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.btn {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-solid);
+    color: var(--text);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); text-decoration: none; }
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), #9b6bff);
+    border-color: transparent;
+    color: #fff;
+}
+.btn-primary:hover { filter: brightness(1.1); }
+
+.btn-danger { color: var(--danger); border-color: rgba(255, 107, 129, 0.4); }
+.btn-danger:hover { background: rgba(255, 107, 129, 0.12); border-color: var(--danger); }
+
+.badge {
+    display: inline-block;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(124, 140, 255, 0.15);
+    color: #c3caff;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* ---------- Tables ---------- */
+.table-wrap { overflow-x: auto; padding: 0; }
+
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th,
+.data-table td { padding: 0.75rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border); }
+.data-table th {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover { background: rgba(124, 140, 255, 0.06); }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- Detail pages ---------- */
+.facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin: 0 0 1.5rem;
+}
+.facts dt { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.facts dd { margin: 0.2rem 0 0; font-size: 1.15rem; font-weight: 500; }
+
+.description { max-width: 70ch; margin-bottom: 2rem; }
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.plain-list { list-style: none; margin: 0; padding: 0; }
+.plain-list li { padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+.plain-list li:last-child { border-bottom: none; }
+
+/* ---------- Forms (styles Django's form.as_p output) ---------- */
+.form { max-width: 640px; }
+.form p { margin: 0 0 1.1rem; }
+.form label { display: block; margin-bottom: 0.3rem; font-weight: 500; }
+
+.form input[type="text"],
+.form input[type="number"],
+.form select,
+.form textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(7, 10, 20, 0.6);
+    color: var(--text);
+    font: inherit;
+}
+.form textarea { min-height: 120px; resize: vertical; }
+.form input:focus,
+.form select:focus,
+.form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124, 140, 255, 0.25); }
+
+.form .helptext { display: block; margin-top: 0.25rem; color: var(--muted); font-size: 0.85rem; }
+
+.errorlist { list-style: none; margin: 0 0 0.4rem; padding: 0; color: var(--danger); font-size: 0.9rem; }
+
+.form-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+
+.narrow { max-width: 560px; }
+.warning { color: #ffc46b; }
+
+/* ---------- Home page ---------- */
+.hero { padding: 3rem 0 2.5rem; max-width: 720px; }
+.hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    background: linear-gradient(135deg, #fff, #b8c1ff 60%, var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.lead { font-size: 1.15rem; color: var(--muted); margin: 0 0 1.75rem; }
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+.stat { display: flex; flex-direction: column; gap: 0.2rem; }
+.stat-value { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; }
+.stat-label { color: var(--muted); font-size: 0.9rem; }
+
+.empty { text-align: center; color: var(--muted); padding: 2.5rem; }

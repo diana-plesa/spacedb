@@ -1,12 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head><title>Delete {{ galaxy.name }}</title></head>
-<body>
+{% extends 'catalog/base.html' %}
+
+{% block title %}Delete {{ galaxy.name }}{% endblock %}
+
+{% block content %}
+<div class="card narrow">
     <h1>Delete {{ galaxy.name }}?</h1>
-    <form method="post">
+
+    {% with systems=galaxy.star_systems.count black_holes=galaxy.black_holes.count %}
+        {% if systems or black_holes %}
+            <p class="warning">
+                This will also delete {{ systems }} star system{{ systems|pluralize }}
+                (with their stars, planets and satellites) and {{ black_holes }} black hole{{ black_holes|pluralize }}.
+            </p>
+        {% endif %}
+    {% endwith %}
+    <p class="muted">This cannot be undone.</p>
+
+    <form method="post" class="form-actions">
         {% csrf_token %}
-        <button type="submit">Yes, delete</button>
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a class="btn" href="{% url 'galaxy_detail' galaxy.pk %}">Cancel</a>
     </form>
-    <a href="{% url 'galaxy_detail' galaxy.pk %}">Cancel</a>
-</body>
-</html>
+</div>
+{% endblock %}

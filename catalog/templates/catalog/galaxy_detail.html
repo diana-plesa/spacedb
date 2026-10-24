@@ -1,13 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head><title>{{ galaxy.name }}</title></head>
-<body>
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ galaxy.name }}{% endblock %}
+
+{% block content %}
+<p class="back-link"><a href="{% url 'galaxy_list' %}">← All galaxies</a></p>
+
+<div class="page-header">
     <h1>{{ galaxy.name }}</h1>
-    <p>Type: {{ galaxy.get_galaxy_type_display }}</p>
-    <p>Distance: {{ galaxy.distance_ly }} light-years</p>
-    <p>{{ galaxy.description }}</p>
-    <a href="{% url 'galaxy_update' galaxy.pk %}">Edit</a> |
-    <a href="{% url 'galaxy_delete' galaxy.pk %}">Delete</a> |
-    <a href="{% url 'galaxy_list' %}">Back to list</a>
-</body>
-</html>
+    <div class="actions">
+        <a class="btn" href="{% url 'galaxy_update' galaxy.pk %}">Edit</a>
+        <a class="btn btn-danger" href="{% url 'galaxy_delete' galaxy.pk %}">Delete</a>
+    </div>
+</div>
+
+<dl class="facts">
+    <div>
+        <dt>Type</dt>
+        <dd>{{ galaxy.get_galaxy_type_display }}</dd>
+    </div>
+    <div>
+        <dt>Distance</dt>
+        <dd>{{ galaxy.distance_ly|floatformat:"0g" }} ly</dd>
+    </div>
+    <div>
+        <dt>Right ascension</dt>
+        <dd>{% if galaxy.ra_deg is not None %}{{ galaxy.ra_deg }}°{% else %}—{% endif %}</dd>
+    </div>
+    <div>
+        <dt>Declination</dt>
+        <dd>{% if galaxy.dec_deg is not None %}{{ galaxy.dec_deg }}°{% else %}—{% endif %}</dd>
+    </div>
+</dl>
+
+{% if galaxy.description %}
+    <p class="description">{{ galaxy.description|linebreaksbr }}</p>
+{% endif %}
+
+<div class="grid-2">
+    <section class="card">
+        <h2>Star systems</h2>
+        <ul class="plain-list">
+            {% for system in galaxy.star_systems.all %}
+                <li>{{ system.name }} <span class="muted">· {{ system.distance_ly|floatformat:"0g" }} ly</span></li>
+            {% empty %}
+                <li class="muted">None recorded yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="card">
+        <h2>Black holes</h2>
+        <ul class="plain-list">
+            {% for black_hole in galaxy.black_holes.all %}
+                <li>{{ black_hole.name }} <span class="badge">{{ black_hole.get_bh_type_display }}</span></li>
+            {% empty %}
+                <li class="muted">None recorded yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}
