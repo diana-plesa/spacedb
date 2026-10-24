@@ -1,0 +1,40 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Satellites{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Satellites</h1>
+        <p class="muted">{{ satellites|length }} in the catalog</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'satellite_create' %}">+ Add satellite</a>
+</div>
+
+{% if satellites %}
+    <div class="card table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Planet</th>
+                    <th>Kind</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for satellite in satellites %}
+                    <tr>
+                        <td><a href="{{ satellite.get_absolute_url }}">{{ satellite.name }}</a></td>
+                        <td><a href="{{ satellite.planet.get_absolute_url }}">{{ satellite.planet }}</a></td>
+                        <td><span class="badge">{{ satellite.get_kind_display }}</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card empty">
+        No satellites yet. <a href="{% url 'satellite_create' %}">Add the first one</a>.
+    </div>
+{% endif %}
+{% endblock %}

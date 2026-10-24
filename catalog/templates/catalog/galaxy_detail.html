@@ -22,14 +22,7 @@
         <dt>Distance</dt>
         <dd>{{ galaxy.distance_ly|floatformat:"0g" }} ly</dd>
     </div>
-    <div>
-        <dt>Right ascension</dt>
-        <dd>{% if galaxy.ra_deg is not None %}{{ galaxy.ra_deg }}°{% else %}—{% endif %}</dd>
-    </div>
-    <div>
-        <dt>Declination</dt>
-        <dd>{% if galaxy.dec_deg is not None %}{{ galaxy.dec_deg }}°{% else %}—{% endif %}</dd>
-    </div>
+    {% include 'catalog/_coordinates.html' with obj=galaxy %}
 </dl>
 
 {% if galaxy.description %}
@@ -38,10 +31,13 @@
 
 <div class="grid-2">
     <section class="card">
-        <h2>Star systems</h2>
+        <div class="section-header">
+            <h2>Star systems</h2>
+            <a class="btn btn-small" href="{% url 'starsystem_create' %}?galaxy={{ galaxy.pk }}">+ Add</a>
+        </div>
         <ul class="plain-list">
             {% for system in galaxy.star_systems.all %}
-                <li>{{ system.name }} <span class="muted">· {{ system.distance_ly|floatformat:"0g" }} ly</span></li>
+                <li><a href="{{ system.get_absolute_url }}">{{ system.name }}</a> <span class="muted">· {{ system.distance_ly|floatformat:"0g" }} ly</span></li>
             {% empty %}
                 <li class="muted">None recorded yet.</li>
             {% endfor %}
@@ -49,10 +45,13 @@
     </section>
 
     <section class="card">
-        <h2>Black holes</h2>
+        <div class="section-header">
+            <h2>Black holes</h2>
+            <a class="btn btn-small" href="{% url 'blackhole_create' %}?galaxy={{ galaxy.pk }}">+ Add</a>
+        </div>
         <ul class="plain-list">
             {% for black_hole in galaxy.black_holes.all %}
-                <li>{{ black_hole.name }} <span class="badge">{{ black_hole.get_bh_type_display }}</span></li>
+                <li><a href="{{ black_hole.get_absolute_url }}">{{ black_hole.name }}</a> <span class="badge">{{ black_hole.get_bh_type_display }}</span></li>
             {% empty %}
                 <li class="muted">None recorded yet.</li>
             {% endfor %}

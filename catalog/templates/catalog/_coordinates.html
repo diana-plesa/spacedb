@@ -1,0 +1,9 @@
+{# Included inside a <dl class="facts"> on every detail page: {% include 'catalog/_coordinates.html' with obj=star %} #}
+<div>
+    <dt>Right ascension</dt>
+    <dd>{% if obj.ra_deg is not None %}{{ obj.ra_deg }}°{% else %}—{% endif %}</dd>
+</div>
+<div>
+    <dt>Declination</dt>
+    <dd>{% if obj.dec_deg is not None %}{{ obj.dec_deg }}°{% else %}—{% endif %}</dd>
+</div>

@@ -14,10 +14,18 @@
     <header class="site-header">
         <nav class="nav container">
             <a class="brand" href="{% url 'home' %}">✦ spacedb</a>
+            {# url_name is e.g. 'star_detail'; the trailing underscore keeps 'star_' from matching 'starsystem_' #}
+            {% with current=request.resolver_match.url_name %}
             <ul class="nav-links">
-                <li><a href="{% url 'galaxy_list' %}" class="{% if 'galaxy' in request.resolver_match.url_name %}active{% endif %}">Galaxies</a></li>
+                <li><a href="{% url 'galaxy_list' %}" class="{% if 'galaxy_' in current %}active{% endif %}">Galaxies</a></li>
+                <li><a href="{% url 'starsystem_list' %}" class="{% if 'starsystem_' in current %}active{% endif %}">Star systems</a></li>
+                <li><a href="{% url 'star_list' %}" class="{% if 'star_' in current %}active{% endif %}">Stars</a></li>
+                <li><a href="{% url 'planet_list' %}" class="{% if 'planet_' in current %}active{% endif %}">Planets</a></li>
+                <li><a href="{% url 'satellite_list' %}" class="{% if 'satellite_' in current %}active{% endif %}">Satellites</a></li>
+                <li><a href="{% url 'blackhole_list' %}" class="{% if 'blackhole_' in current %}active{% endif %}">Black holes</a></li>
                 <li><a href="{% url 'admin:index' %}">Admin</a></li>
             </ul>
+            {% endwith %}
         </nav>
     </header>
 

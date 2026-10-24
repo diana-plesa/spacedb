@@ -1,0 +1,27 @@
+{% extends 'catalog/base.html' %}
+
+{# Shared by the delete pages of every model. #}
+
+{% block title %}Delete {{ object }}{% endblock %}
+
+{% block content %}
+<div class="card narrow">
+    <h1>Delete {{ object }}?</h1>
+
+    {% if cascade_counts %}
+        <p class="warning">This will also delete:</p>
+        <ul class="warning">
+            {% for count, name in cascade_counts %}
+                <li>{{ count }} {{ name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <p class="muted">This cannot be undone.</p>
+
+    <form method="post" class="form-actions">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a class="btn" href="{{ object.get_absolute_url }}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

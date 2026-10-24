@@ -1,0 +1,31 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ satellite.name }}{% endblock %}
+
+{% block content %}
+<p class="back-link"><a href="{% url 'satellite_list' %}">← All satellites</a></p>
+
+<div class="page-header">
+    <h1>{{ satellite.name }}</h1>
+    <div class="actions">
+        <a class="btn" href="{% url 'satellite_update' satellite.pk %}">Edit</a>
+        <a class="btn btn-danger" href="{% url 'satellite_delete' satellite.pk %}">Delete</a>
+    </div>
+</div>
+
+<dl class="facts">
+    <div>
+        <dt>Orbits</dt>
+        <dd><a href="{{ satellite.planet.get_absolute_url }}">{{ satellite.planet }}</a></dd>
+    </div>
+    <div>
+        <dt>Kind</dt>
+        <dd>{{ satellite.get_kind_display }}</dd>
+    </div>
+    {% include 'catalog/_coordinates.html' with obj=satellite %}
+</dl>
+
+{% if satellite.description %}
+    <p class="description">{{ satellite.description|linebreaksbr }}</p>
+{% endif %}
+{% endblock %}

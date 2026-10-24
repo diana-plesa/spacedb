@@ -1,0 +1,44 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Stars{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Stars</h1>
+        <p class="muted">{{ stars|length }} in the catalog</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'star_create' %}">+ Add star</a>
+</div>
+
+{% if stars %}
+    <div class="card table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>System</th>
+                    <th>Spectral type</th>
+                    <th class="num">Mass (M☉)</th>
+                    <th class="num">Temperature (K)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for star in stars %}
+                    <tr>
+                        <td><a href="{{ star.get_absolute_url }}">{{ star.name }}</a></td>
+                        <td><a href="{{ star.system.get_absolute_url }}">{{ star.system }}</a></td>
+                        <td>{% if star.spectral_type %}<span class="badge">{{ star.spectral_type }}</span>{% else %}—{% endif %}</td>
+                        <td class="num">{{ star.mass_solar|floatformat:"-2g"|default:"—" }}</td>
+                        <td class="num">{{ star.temperature_k|floatformat:"0g"|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card empty">
+        No stars yet. <a href="{% url 'star_create' %}">Add the first one</a>.
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ starsystem.name }}{% endblock %}
+
+{% block content %}
+<p class="back-link"><a href="{% url 'starsystem_list' %}">← All star systems</a></p>
+
+<div class="page-header">
+    <h1>{{ starsystem.name }}</h1>
+    <div class="actions">
+        <a class="btn" href="{% url 'starsystem_update' starsystem.pk %}">Edit</a>
+        <a class="btn btn-danger" href="{% url 'starsystem_delete' starsystem.pk %}">Delete</a>
+    </div>
+</div>
+
+<dl class="facts">
+    <div>
+        <dt>Galaxy</dt>
+        <dd><a href="{{ starsystem.galaxy.get_absolute_url }}">{{ starsystem.galaxy }}</a></dd>
+    </div>
+    <div>
+        <dt>Distance</dt>
+        <dd>{{ starsystem.distance_ly|floatformat:"-2g" }} ly</dd>
+    </div>
+    {% include 'catalog/_coordinates.html' with obj=starsystem %}
+</dl>
+
+{% if starsystem.description %}
+    <p class="description">{{ starsystem.description|linebreaksbr }}</p>
+{% endif %}
+
+<div class="grid-2">
+    <section class="card">
+        <div class="section-header">
+            <h2>Stars</h2>
+            <a class="btn btn-small" href="{% url 'star_create' %}?system={{ starsystem.pk }}">+ Add</a>
+        </div>
+        <ul class="plain-list">
+            {% for star in starsystem.stars.all %}
+                <li><a href="{{ star.get_absolute_url }}">{{ star.name }}</a>
+                    {% if star.spectral_type %}<span class="badge">{{ star.spectral_type }}</span>{% endif %}</li>
+            {% empty %}
+                <li class="muted">None recorded yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="card">
+        <div class="section-header">
+            <h2>Planets</h2>
+            <a class="btn btn-small" href="{% url 'planet_create' %}?system={{ starsystem.pk }}">+ Add</a>
+        </div>
+        <ul class="plain-list">
+            {% for planet in starsystem.planets.all %}
+                <li><a href="{{ planet.get_absolute_url }}">{{ planet.name }}</a>
+                    {% if planet.is_exoplanet %}<span class="badge badge-exo">Exoplanet</span>{% endif %}</li>
+            {% empty %}
+                <li class="muted">None recorded yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

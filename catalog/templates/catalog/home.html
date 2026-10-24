@@ -8,11 +8,11 @@
 </section>
 
 <div class="stat-grid">
-    {% for label, count in counts %}
-        <div class="card stat">
+    {% for label, count, url_name in counts %}
+        <a class="card stat" href="{% url url_name %}">
             <span class="stat-value">{{ count }}</span>
             <span class="stat-label">{{ label }}</span>
-        </div>
+        </a>
     {% endfor %}
 </div>
 {% endblock %}

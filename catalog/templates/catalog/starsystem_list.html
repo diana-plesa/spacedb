@@ -1,0 +1,44 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Star systems{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Star systems</h1>
+        <p class="muted">{{ systems|length }} in the catalog</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'starsystem_create' %}">+ Add star system</a>
+</div>
+
+{% if systems %}
+    <div class="card table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Galaxy</th>
+                    <th class="num">Distance (ly)</th>
+                    <th class="num">Stars</th>
+                    <th class="num">Planets</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for system in systems %}
+                    <tr>
+                        <td><a href="{{ system.get_absolute_url }}">{{ system.name }}</a></td>
+                        <td><a href="{{ system.galaxy.get_absolute_url }}">{{ system.galaxy }}</a></td>
+                        <td class="num">{{ system.distance_ly|floatformat:"-2g" }}</td>
+                        <td class="num">{{ system.star_count }}</td>
+                        <td class="num">{{ system.planet_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card empty">
+        No star systems yet. <a href="{% url 'starsystem_create' %}">Add the first one</a>.
+    </div>
+{% endif %}
+{% endblock %}

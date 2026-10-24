@@ -1,0 +1,39 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ star.name }}{% endblock %}
+
+{% block content %}
+<p class="back-link"><a href="{% url 'star_list' %}">← All stars</a></p>
+
+<div class="page-header">
+    <h1>{{ star.name }}</h1>
+    <div class="actions">
+        <a class="btn" href="{% url 'star_update' star.pk %}">Edit</a>
+        <a class="btn btn-danger" href="{% url 'star_delete' star.pk %}">Delete</a>
+    </div>
+</div>
+
+<dl class="facts">
+    <div>
+        <dt>Star system</dt>
+        <dd><a href="{{ star.system.get_absolute_url }}">{{ star.system }}</a></dd>
+    </div>
+    <div>
+        <dt>Spectral type</dt>
+        <dd>{{ star.spectral_type|default:"—" }}</dd>
+    </div>
+    <div>
+        <dt>Mass</dt>
+        <dd>{% if star.mass_solar is not None %}{{ star.mass_solar|floatformat:"-3g" }} M☉{% else %}—{% endif %}</dd>
+    </div>
+    <div>
+        <dt>Temperature</dt>
+        <dd>{% if star.temperature_k is not None %}{{ star.temperature_k|floatformat:"0g" }} K{% else %}—{% endif %}</dd>
+    </div>
+    {% include 'catalog/_coordinates.html' with obj=star %}
+</dl>
+
+{% if star.description %}
+    <p class="description">{{ star.description|linebreaksbr }}</p>
+{% endif %}
+{% endblock %}

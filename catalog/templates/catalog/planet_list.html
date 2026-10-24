@@ -1,0 +1,46 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Planets{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Planets</h1>
+        <p class="muted">{{ planets|length }} in the catalog</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'planet_create' %}">+ Add planet</a>
+</div>
+
+{% if planets %}
+    <div class="card table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>System</th>
+                    <th>Kind</th>
+                    <th class="num">Mass (M⊕)</th>
+                    <th class="num">Radius (R⊕)</th>
+                    <th class="num">Orbital period (days)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for planet in planets %}
+                    <tr>
+                        <td><a href="{{ planet.get_absolute_url }}">{{ planet.name }}</a></td>
+                        <td><a href="{{ planet.system.get_absolute_url }}">{{ planet.system }}</a></td>
+                        <td>{% if planet.is_exoplanet %}<span class="badge badge-exo">Exoplanet</span>{% else %}<span class="badge">Solar System</span>{% endif %}</td>
+                        <td class="num">{{ planet.mass_earth|floatformat:"-3g"|default:"—" }}</td>
+                        <td class="num">{{ planet.radius_earth|floatformat:"-3g"|default:"—" }}</td>
+                        <td class="num">{{ planet.orbital_period_days|floatformat:"-2g"|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card empty">
+        No planets yet. <a href="{% url 'planet_create' %}">Add the first one</a>.
+    </div>
+{% endif %}
+{% endblock %}

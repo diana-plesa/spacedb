@@ -1,0 +1,44 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Black holes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Black holes</h1>
+        <p class="muted">{{ black_holes|length }} in the catalog</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'blackhole_create' %}">+ Add black hole</a>
+</div>
+
+{% if black_holes %}
+    <div class="card table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Galaxy</th>
+                    <th>Type</th>
+                    <th class="num">Mass (M☉)</th>
+                    <th class="num">Redshift (z)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for black_hole in black_holes %}
+                    <tr>
+                        <td><a href="{{ black_hole.get_absolute_url }}">{{ black_hole.name }}</a></td>
+                        <td><a href="{{ black_hole.galaxy.get_absolute_url }}">{{ black_hole.galaxy }}</a></td>
+                        <td><span class="badge">{{ black_hole.get_bh_type_display }}</span></td>
+                        <td class="num">{{ black_hole.mass_solar|floatformat:"-2g"|default:"—" }}</td>
+                        <td class="num">{{ black_hole.redshift|floatformat:"-3"|default:"—" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card empty">
+        No black holes yet. <a href="{% url 'blackhole_create' %}">Add the first one</a>.
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.urls import reverse
 
 
 class CelestialObject(models.Model):
@@ -24,6 +25,10 @@ class CelestialObject(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        # e.g. 'galaxy_detail' or 'starsystem_detail', matching the names in urls.py
+        return reverse(f'{self._meta.model_name}_detail', args=[self.pk])
 
 
 class Galaxy(CelestialObject):

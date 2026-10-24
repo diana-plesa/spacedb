@@ -225,6 +225,12 @@ main.container { flex: 1; padding-top: 2rem; padding-bottom: 3rem; }
 .plain-list li { padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
 .plain-list li:last-child { border-bottom: none; }
 
+.section-header { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; }
+.section-header h2 { margin: 0; }
+.btn-small { padding: 0.25rem 0.7rem; font-size: 0.85rem; }
+
+.badge-exo { background: rgba(94, 225, 230, 0.15); color: var(--accent-2); }
+
 /* ---------- Forms (styles Django's form.as_p output) ---------- */
 .form { max-width: 640px; }
 .form p { margin: 0 0 1.1rem; }
@@ -272,7 +278,8 @@ main.container { flex: 1; padding-top: 2rem; padding-bottom: 3rem; }
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 1rem;
 }
-.stat { display: flex; flex-direction: column; gap: 0.2rem; }
+.stat { display: flex; flex-direction: column; gap: 0.2rem; color: var(--text); transition: border-color 0.15s, transform 0.15s; }
+.stat:hover { text-decoration: none; border-color: var(--accent); transform: translateY(-2px); }
 .stat-value { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; }
 .stat-label { color: var(--muted); font-size: 0.9rem; }
 

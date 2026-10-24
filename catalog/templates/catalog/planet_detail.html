@@ -1,0 +1,58 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ planet.name }}{% endblock %}
+
+{% block content %}
+<p class="back-link"><a href="{% url 'planet_list' %}">← All planets</a></p>
+
+<div class="page-header">
+    <div>
+        <h1>{{ planet.name }}</h1>
+        {% if planet.is_exoplanet %}<span class="badge badge-exo">Exoplanet</span>{% endif %}
+    </div>
+    <div class="actions">
+        <a class="btn" href="{% url 'planet_update' planet.pk %}">Edit</a>
+        <a class="btn btn-danger" href="{% url 'planet_delete' planet.pk %}">Delete</a>
+    </div>
+</div>
+
+<dl class="facts">
+    <div>
+        <dt>Star system</dt>
+        <dd><a href="{{ planet.system.get_absolute_url }}">{{ planet.system }}</a></dd>
+    </div>
+    <div>
+        <dt>Mass</dt>
+        <dd>{% if planet.mass_earth is not None %}{{ planet.mass_earth|floatformat:"-3g" }} M⊕{% else %}—{% endif %}</dd>
+    </div>
+    <div>
+        <dt>Radius</dt>
+        <dd>{% if planet.radius_earth is not None %}{{ planet.radius_earth|floatformat:"-3g" }} R⊕{% else %}—{% endif %}</dd>
+    </div>
+    <div>
+        <dt>Orbital period</dt>
+        <dd>{% if planet.orbital_period_days is not None %}{{ planet.orbital_period_days|floatformat:"-2g" }} days{% else %}—{% endif %}</dd>
+    </div>
+    {% include 'catalog/_coordinates.html' with obj=planet %}
+</dl>
+
+{% if planet.description %}
+    <p class="description">{{ planet.description|linebreaksbr }}</p>
+{% endif %}
+
+<div class="grid-2">
+    <section class="card">
+        <div class="section-header">
+            <h2>Satellites</h2>
+            <a class="btn btn-small" href="{% url 'satellite_create' %}?planet={{ planet.pk }}">+ Add</a>
+        </div>
+        <ul class="plain-list">
+            {% for satellite in planet.satellites.all %}
+                <li><a href="{{ satellite.get_absolute_url }}">{{ satellite.name }}</a> <span class="badge">{{ satellite.get_kind_display }}</span></li>
+            {% empty %}
+                <li class="muted">None recorded yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}
