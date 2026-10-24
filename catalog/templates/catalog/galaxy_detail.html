@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>{{ galaxy.name }}</title></head>
+<body>
+    <h1>{{ galaxy.name }}</h1>
+    <p>Type: {{ galaxy.get_galaxy_type_display }}</p>
+    <p>Distance: {{ galaxy.distance_ly }} light-years</p>
+    <p>{{ galaxy.description }}</p>
+    <a href="{% url 'galaxy_update' galaxy.pk %}">Edit</a> |
+    <a href="{% url 'galaxy_delete' galaxy.pk %}">Delete</a> |
+    <a href="{% url 'galaxy_list' %}">Back to list</a>
+</body>
+</html>

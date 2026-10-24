@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Galaxies</title>
+</head>
+<body>
+<h1>Galaxies</h1>
+<a href="{% url 'galaxy_create' %}">+ Add galaxy</a>
+<ul>
+    {% for galaxy in galaxies %}
+        <li><a href="{% url 'galaxy_detail' galaxy.pk %}">{{ galaxy.name }}</a></li>
+    {% empty %}
+        <li>No galaxies yet.</li>
+    {% endfor %}
+</ul>
+</body>
+</html>

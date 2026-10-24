@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Delete {{ galaxy.name }}</title></head>
+<body>
+    <h1>Delete {{ galaxy.name }}?</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, delete</button>
+    </form>
+    <a href="{% url 'galaxy_detail' galaxy.pk %}">Cancel</a>
+</body>
+</html>
