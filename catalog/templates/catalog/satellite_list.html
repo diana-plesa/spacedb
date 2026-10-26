@@ -12,18 +12,19 @@
 </div>
 
 {% if satellites %}
+    {% include 'catalog/_table_toolbar.html' %}
     <div class="card table-wrap">
-        <table class="data-table">
+        <table class="data-table js-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Planet</th>
-                    <th>Kind</th>
+                    <th data-sort="text">Name</th>
+                    <th data-sort="text">Planet</th>
+                    <th data-sort="text">Kind</th>
                 </tr>
             </thead>
             <tbody>
                 {% for satellite in satellites %}
-                    <tr>
+                    <tr data-category="{{ satellite.get_kind_display }}">
                         <td><a href="{{ satellite.get_absolute_url }}">{{ satellite.name }}</a></td>
                         <td><a href="{{ satellite.planet.get_absolute_url }}">{{ satellite.planet }}</a></td>
                         <td><span class="badge">{{ satellite.get_kind_display }}</span></td>

@@ -1,0 +1,41 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+
+{% block title %}Sky map{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Sky map</h1>
+        <p class="muted">Every catalog object with coordinates, on a real survey of the sky. Drag to pan, scroll to zoom, click a marker for details.</p>
+    </div>
+</div>
+
+<div class="sky-layout">
+    <div id="aladin-lite-div" class="card sky-map" data-url="{% url 'api_sky_objects' %}"></div>
+
+    <aside class="sky-sidebar">
+        <div id="sky-info" class="card sky-info" hidden>
+            <span id="sky-info-type" class="badge"></span>
+            <h2 id="sky-info-name"></h2>
+            <p id="sky-info-coords" class="muted"></p>
+            <a id="sky-info-link" class="btn btn-small" href="#">Open details →</a>
+        </div>
+
+        <div class="card">
+            <h2>Layers</h2>
+            <div id="sky-layers"></div>
+        </div>
+
+        <div class="card">
+            <h2>Go to</h2>
+            <ul id="sky-object-list" class="sky-list"></ul>
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js" charset="utf-8"></script>
+<script src="{% static 'catalog/js/sky-map.js' %}"></script>
+{% endblock %}

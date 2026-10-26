@@ -12,21 +12,22 @@
 </div>
 
 {% if planets %}
+    {% include 'catalog/_table_toolbar.html' %}
     <div class="card table-wrap">
-        <table class="data-table">
+        <table class="data-table js-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>System</th>
-                    <th>Kind</th>
-                    <th class="num">Mass (M⊕)</th>
-                    <th class="num">Radius (R⊕)</th>
-                    <th class="num">Orbital period (days)</th>
+                    <th data-sort="text">Name</th>
+                    <th data-sort="text">System</th>
+                    <th data-sort="text">Kind</th>
+                    <th class="num" data-sort="number">Mass (M⊕)</th>
+                    <th class="num" data-sort="number">Radius (R⊕)</th>
+                    <th class="num" data-sort="number">Orbital period (days)</th>
                 </tr>
             </thead>
             <tbody>
                 {% for planet in planets %}
-                    <tr>
+                    <tr data-category="{% if planet.is_exoplanet %}Exoplanet{% else %}Solar System{% endif %}">
                         <td><a href="{{ planet.get_absolute_url }}">{{ planet.name }}</a></td>
                         <td><a href="{{ planet.system.get_absolute_url }}">{{ planet.system }}</a></td>
                         <td>{% if planet.is_exoplanet %}<span class="badge badge-exo">Exoplanet</span>{% else %}<span class="badge">Solar System</span>{% endif %}</td>

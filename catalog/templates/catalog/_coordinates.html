@@ -1,3 +1,4 @@
+{% load l10n %}
 {# Included inside a <dl class="facts"> on every detail page: {% include 'catalog/_coordinates.html' with obj=star %} #}
 <div>
     <dt>Right ascension</dt>
@@ -7,3 +8,10 @@
     <dt>Declination</dt>
     <dd>{% if obj.dec_deg is not None %}{{ obj.dec_deg }}°{% else %}—{% endif %}</dd>
 </div>
+{% if obj.ra_deg is not None and obj.dec_deg is not None %}
+    <div>
+        <dt>Sky map</dt>
+        {# unlocalize keeps the numbers in plain 12.34 form for the URL #}
+        <dd><a href="{% url 'sky_map' %}?ra={{ obj.ra_deg|unlocalize }}&amp;dec={{ obj.dec_deg|unlocalize }}">View on sky map →</a></dd>
+    </div>
+{% endif %}

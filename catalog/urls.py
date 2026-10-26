@@ -5,6 +5,9 @@ from . import views
 # which CelestialObject.get_absolute_url and the shared views rely on.
 urlpatterns = [
     path('', views.home, name='home'),
+    path('sky/', views.sky_map, name='sky_map'),
+    path('api/search/', views.api_search, name='api_search'),
+    path('api/sky-objects/', views.api_sky_objects, name='api_sky_objects'),
 
     path('galaxies/', views.GalaxyList.as_view(), name='galaxy_list'),
     path('galaxies/new/', views.GalaxyCreate.as_view(), name='galaxy_create'),

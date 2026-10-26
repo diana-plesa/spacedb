@@ -284,3 +284,99 @@ main.container { flex: 1; padding-top: 2rem; padding-bottom: 3rem; }
 .stat-label { color: var(--muted); font-size: 0.9rem; }
 
 .empty { text-align: center; color: var(--muted); padding: 2.5rem; }
+
+/* ---------- Header layout with search ---------- */
+.site-header .container { max-width: 1320px; }
+.nav-links a { padding: 0.4rem 0.65rem; font-size: 0.93rem; }
+
+/* ---------- Live search ---------- */
+.search { position: relative; }
+.search input,
+.toolbar input,
+.toolbar select {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(7, 10, 20, 0.6);
+    color: var(--text);
+    font: inherit;
+}
+.search input { width: 220px; }
+.search input:focus,
+.toolbar input:focus,
+.toolbar select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124, 140, 255, 0.25); }
+
+.search-results {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    width: 320px;
+    max-height: 70vh;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0.35rem;
+    list-style: none;
+    background: var(--surface-solid);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.search-results a {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 8px;
+    color: var(--text);
+}
+.search-results a:hover { background: rgba(124, 140, 255, 0.15); text-decoration: none; }
+.search-type { color: var(--muted); font-size: 0.85rem; white-space: nowrap; }
+.search-empty { padding: 0.5rem 0.7rem; color: var(--muted); }
+
+/* ---------- Table toolbar and sorting ---------- */
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+.toolbar input { width: 260px; max-width: 100%; }
+
+.data-table th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+.data-table th.sortable:hover { color: var(--text); }
+.data-table th.sortable::after { content: " ↕"; opacity: 0.4; }
+.data-table th[data-direction="asc"]::after { content: " ↑"; opacity: 1; color: var(--accent-2); }
+.data-table th[data-direction="desc"]::after { content: " ↓"; opacity: 1; color: var(--accent-2); }
+
+/* ---------- Sky map ---------- */
+.sky-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 1rem;
+    align-items: start;
+}
+@media (max-width: 860px) {
+    .sky-layout { grid-template-columns: 1fr; }
+}
+
+.sky-map { height: 600px; padding: 0; overflow: hidden; color: var(--muted); }
+
+.sky-sidebar { display: flex; flex-direction: column; gap: 1rem; }
+.sky-sidebar h2 { font-size: 1rem; }
+.sky-info h2 { margin: 0.5rem 0 0.25rem; font-size: 1.2rem; }
+.sky-info p { margin: 0 0 0.75rem; font-size: 0.9rem; }
+
+.layer-toggle { display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0; cursor: pointer; }
+.swatch { width: 12px; height: 12px; border-radius: 50%; }
+
+.sky-list { list-style: none; margin: 0; padding: 0; max-height: 300px; overflow-y: auto; }
+.sky-object {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.25rem;
+    padding: 0.35rem 0.6rem;
+    border: none;
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.sky-object:hover { background: rgba(124, 140, 255, 0.12); }

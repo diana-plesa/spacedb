@@ -12,20 +12,21 @@
 </div>
 
 {% if black_holes %}
+    {% include 'catalog/_table_toolbar.html' %}
     <div class="card table-wrap">
-        <table class="data-table">
+        <table class="data-table js-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Galaxy</th>
-                    <th>Type</th>
-                    <th class="num">Mass (M☉)</th>
-                    <th class="num">Redshift (z)</th>
+                    <th data-sort="text">Name</th>
+                    <th data-sort="text">Galaxy</th>
+                    <th data-sort="text">Type</th>
+                    <th class="num" data-sort="number">Mass (M☉)</th>
+                    <th class="num" data-sort="number">Redshift (z)</th>
                 </tr>
             </thead>
             <tbody>
                 {% for black_hole in black_holes %}
-                    <tr>
+                    <tr data-category="{{ black_hole.get_bh_type_display }}">
                         <td><a href="{{ black_hole.get_absolute_url }}">{{ black_hole.name }}</a></td>
                         <td><a href="{{ black_hole.galaxy.get_absolute_url }}">{{ black_hole.galaxy }}</a></td>
                         <td><span class="badge">{{ black_hole.get_bh_type_display }}</span></td>

@@ -12,20 +12,21 @@
 </div>
 
 {% if systems %}
+    {% include 'catalog/_table_toolbar.html' %}
     <div class="card table-wrap">
-        <table class="data-table">
+        <table class="data-table js-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Galaxy</th>
-                    <th class="num">Distance (ly)</th>
-                    <th class="num">Stars</th>
-                    <th class="num">Planets</th>
+                    <th data-sort="text">Name</th>
+                    <th data-sort="text">Galaxy</th>
+                    <th class="num" data-sort="number">Distance (ly)</th>
+                    <th class="num" data-sort="number">Stars</th>
+                    <th class="num" data-sort="number">Planets</th>
                 </tr>
             </thead>
             <tbody>
                 {% for system in systems %}
-                    <tr>
+                    <tr data-category="{{ system.galaxy }}">
                         <td><a href="{{ system.get_absolute_url }}">{{ system.name }}</a></td>
                         <td><a href="{{ system.galaxy.get_absolute_url }}">{{ system.galaxy }}</a></td>
                         <td class="num">{{ system.distance_ly|floatformat:"-2g" }}</td>

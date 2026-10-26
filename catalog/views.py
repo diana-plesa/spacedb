@@ -1,5 +1,6 @@
 from django.contrib.admin.utils import NestedObjects
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -18,6 +19,47 @@ def home(request):
         ('Black holes', BlackHole.objects.count(), 'blackhole_list'),
     ]
     return render(request, 'catalog/home.html', {'counts': counts})
+
+
+def sky_map(request):
+    return render(request, 'catalog/sky_map.html')
+
+
+# ---------- JSON endpoints used by the JavaScript on the pages ----------
+
+ALL_MODELS = [Galaxy, StarSystem, Star, Planet, Satellite, BlackHole]
+
+
+def api_search(request):
+    """Live search: /api/search/?q=cen -> objects of any type whose name contains 'cen'."""
+    query = request.GET.get('q', '').strip()
+    results = []
+    if len(query) >= 2:
+        for model in ALL_MODELS:
+            for obj in model.objects.filter(name__icontains=query)[:5]:
+                results.append({
+                    'name': obj.name,
+                    'type': model._meta.verbose_name.capitalize(),
+                    'url': obj.get_absolute_url(),
+                })
+    return JsonResponse({'results': results[:12]})
+
+
+def api_sky_objects(request):
+    """Every object that has sky coordinates, for the sky map."""
+    objects = []
+    for model in ALL_MODELS:
+        for obj in model.objects.filter(ra_deg__isnull=False, dec_deg__isnull=False):
+            objects.append({
+                'name': obj.name,
+                'kind': model._meta.model_name,
+                'kind_label': model._meta.verbose_name.capitalize(),
+                'kind_label_plural': model._meta.verbose_name_plural.capitalize(),
+                'ra': obj.ra_deg,
+                'dec': obj.dec_deg,
+                'url': obj.get_absolute_url(),
+            })
+    return JsonResponse({'objects': objects})
 
 
 # ---------- Shared behaviour for the create / edit / delete pages ----------

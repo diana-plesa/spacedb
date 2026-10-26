@@ -23,9 +23,16 @@
                 <li><a href="{% url 'planet_list' %}" class="{% if 'planet_' in current %}active{% endif %}">Planets</a></li>
                 <li><a href="{% url 'satellite_list' %}" class="{% if 'satellite_' in current %}active{% endif %}">Satellites</a></li>
                 <li><a href="{% url 'blackhole_list' %}" class="{% if 'blackhole_' in current %}active{% endif %}">Black holes</a></li>
+                <li><a href="{% url 'sky_map' %}" class="{% if current == 'sky_map' %}active{% endif %}">Sky map</a></li>
                 <li><a href="{% url 'admin:index' %}">Admin</a></li>
             </ul>
             {% endwith %}
+
+            <div class="search">
+                <input id="search-input" type="search" placeholder="Search everything…" autocomplete="off"
+                       aria-label="Search the catalog" data-url="{% url 'api_search' %}">
+                <ul id="search-results" class="search-results" hidden></ul>
+            </div>
         </nav>
     </header>
 
@@ -37,6 +44,8 @@
         spacedb · a catalog of the universe
     </footer>
 
+    <script src="{% static 'catalog/js/search.js' %}"></script>
+    <script src="{% static 'catalog/js/table-tools.js' %}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

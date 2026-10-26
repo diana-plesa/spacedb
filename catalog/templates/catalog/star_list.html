@@ -12,20 +12,21 @@
 </div>
 
 {% if stars %}
+    {% include 'catalog/_table_toolbar.html' %}
     <div class="card table-wrap">
-        <table class="data-table">
+        <table class="data-table js-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>System</th>
-                    <th>Spectral type</th>
-                    <th class="num">Mass (M☉)</th>
-                    <th class="num">Temperature (K)</th>
+                    <th data-sort="text">Name</th>
+                    <th data-sort="text">System</th>
+                    <th data-sort="text">Spectral type</th>
+                    <th class="num" data-sort="number">Mass (M☉)</th>
+                    <th class="num" data-sort="number">Temperature (K)</th>
                 </tr>
             </thead>
             <tbody>
                 {% for star in stars %}
-                    <tr>
+                    <tr data-category="{% if star.spectral_type %}Class {{ star.spectral_type|slice:':1' }}{% endif %}">
                         <td><a href="{{ star.get_absolute_url }}">{{ star.name }}</a></td>
                         <td><a href="{{ star.system.get_absolute_url }}">{{ star.system }}</a></td>
                         <td>{% if star.spectral_type %}<span class="badge">{{ star.spectral_type }}</span>{% else %}—{% endif %}</td>
