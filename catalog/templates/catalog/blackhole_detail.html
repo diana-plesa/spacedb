@@ -1,4 +1,5 @@
 {% extends 'catalog/base.html' %}
+{% load space_format %}
 
 {% block title %}{{ blackhole.name }}{% endblock %}
 
@@ -25,12 +26,12 @@
             </div>
             <div>
                 <dt>Mass</dt>
-                <dd>{% if blackhole.mass_solar is not None %}{{ blackhole.mass_solar|floatformat:"-2g" }} M☉{% else %}—{% endif %}</dd>
+                <dd>{% if blackhole.mass_solar is not None %}{{ blackhole.mass_solar|sci }} M☉{% else %}—{% endif %}</dd>
             </div>
             {% if blackhole.bh_type == 'quasar' %}
                 <div>
                     <dt>Luminosity</dt>
-                    <dd>{% if blackhole.luminosity_solar is not None %}{{ blackhole.luminosity_solar|floatformat:"-2g" }} L☉{% else %}—{% endif %}</dd>
+                    <dd>{% if blackhole.luminosity_solar is not None %}{{ blackhole.luminosity_solar|sci }} L☉{% else %}—{% endif %}</dd>
                 </div>
                 <div>
                     <dt>Redshift</dt>

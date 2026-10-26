@@ -1,4 +1,5 @@
 {% extends 'catalog/base.html' %}
+{% load space_format %}
 
 {% block title %}{{ starsystem.name }}{% endblock %}
 
@@ -22,7 +23,7 @@
             </div>
             <div>
                 <dt>Distance</dt>
-                <dd>{{ starsystem.distance_ly|floatformat:"-2g" }} ly</dd>
+                <dd>{{ starsystem.distance_ly|sci }} ly</dd>
             </div>
             {% include 'catalog/_coordinates.html' with obj=starsystem %}
         </dl>

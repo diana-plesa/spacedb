@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlparse
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -8,6 +9,9 @@ from django.urls import reverse
 # Finds the file name in a link to a Wikimedia Commons / Wikipedia file *page*, e.g.
 #   https://commons.wikimedia.org/wiki/File:Moon.jpg
 #   https://en.wikipedia.org/wiki/Moon#/media/File:Moon.jpg
+# Distances, masses, sizes, periods, temperatures, etc. can't be below zero
+NOT_NEGATIVE = [MinValueValidator(0)]
+
 FILE_PAGE_PATTERN = re.compile(r'^https?://[^/]*(wikipedia|wikimedia)\.org/.*File:([^?#]+)')
 
 
@@ -53,6 +57,15 @@ class CelestialObject(models.Model):
             self.image_url = f'https://commons.wikimedia.org/wiki/Special:FilePath/{file_name}?width=960'
             self.image_source = f'https://commons.wikimedia.org/wiki/File:{file_name}'
 
+    @property
+    def image_credit(self):
+        """Name of the site the picture comes from, e.g. 'nasa.gov', for the caption."""
+        # @property lets templates and code use obj.image_credit like a field, without ()
+        host = urlparse(self.image_source or self.image_url).netloc.lower().removeprefix('www.')
+        if host.endswith('wikimedia.org') or host.endswith('wikipedia.org'):
+            return 'Wikimedia Commons'
+        return host
+
     def get_absolute_url(self):
         # e.g. 'galaxy_detail' or 'starsystem_detail', matching the names in urls.py
         return reverse(f'{self._meta.model_name}_detail', args=[self.pk])
@@ -67,7 +80,7 @@ class Galaxy(CelestialObject):
     ]
 
     galaxy_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-    distance_ly = models.FloatField(help_text="Distance from Earth in light-years")
+    distance_ly = models.FloatField(validators=NOT_NEGATIVE, help_text="Distance from Earth in light-years")
 
     class Meta(CelestialObject.Meta):
         verbose_name_plural = 'galaxies'
@@ -75,21 +88,21 @@ class Galaxy(CelestialObject):
 
 class StarSystem(CelestialObject):
     galaxy = models.ForeignKey(Galaxy, on_delete=models.CASCADE, related_name='star_systems')
-    distance_ly = models.FloatField(help_text="Distance from Earth in light-years")
+    distance_ly = models.FloatField(validators=NOT_NEGATIVE, help_text="Distance from Earth in light-years")
 
 
 class Star(CelestialObject):
     system = models.ForeignKey(StarSystem, on_delete=models.CASCADE, related_name='stars')
     spectral_type = models.CharField(max_length=10, blank=True, help_text="e.g. G2V")
-    mass_solar = models.FloatField(null=True, blank=True, help_text="Mass in solar masses")
-    temperature_k = models.FloatField(null=True, blank=True, help_text="Surface temperature in kelvin")
+    mass_solar = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True, help_text="Mass in solar masses")
+    temperature_k = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True, help_text="Surface temperature in kelvin")
 
 
 class Planet(CelestialObject):
     system = models.ForeignKey(StarSystem, on_delete=models.CASCADE, related_name='planets')
-    mass_earth = models.FloatField(null=True, blank=True, help_text="Mass in Earth masses")
-    radius_earth = models.FloatField(null=True, blank=True, help_text="Radius in Earth radii")
-    orbital_period_days = models.FloatField(null=True, blank=True)
+    mass_earth = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True, help_text="Mass in Earth masses")
+    radius_earth = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True, help_text="Radius in Earth radii")
+    orbital_period_days = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True)
     is_exoplanet = models.BooleanField(default=False)
 
 
@@ -112,9 +125,9 @@ class BlackHole(CelestialObject):
 
     galaxy = models.ForeignKey(Galaxy, on_delete=models.CASCADE, related_name='black_holes')
     bh_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-    mass_solar = models.FloatField(null=True, blank=True, help_text="Mass in solar masses")
-    luminosity_solar = models.FloatField(null=True, blank=True, help_text="Quasars only: luminosity in solar luminosities")
-    redshift = models.FloatField(null=True, blank=True, help_text="Quasars only: redshift (z)")
+    mass_solar = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True, help_text="Mass in solar masses")
+    luminosity_solar = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True, help_text="Quasars only: luminosity in solar luminosities")
+    redshift = models.FloatField(validators=NOT_NEGATIVE, null=True, blank=True, help_text="Quasars only: redshift (z)")
 
     def clean(self):
         super().clean()  # keep the picture-link fix from CelestialObject
