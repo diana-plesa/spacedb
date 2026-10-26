@@ -1,0 +1,9 @@
+{# The object's picture as a tilted photo with a credit link: {% include 'catalog/_image.html' with obj=planet %} #}
+{% if obj.image_url %}
+    <figure class="polaroid">
+        <img src="{{ obj.image_url }}" alt="{{ obj.name }}" loading="lazy">
+        <figcaption>
+            {% if obj.image_source %}<a href="{{ obj.image_source }}" target="_blank" rel="noopener">Image: Wikimedia Commons</a>{% else %}{{ obj.name }}{% endif %}
+        </figcaption>
+    </figure>
+{% endif %}

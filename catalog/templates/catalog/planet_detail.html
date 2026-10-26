@@ -16,29 +16,34 @@
     </div>
 </div>
 
-<dl class="facts">
+<div class="detail-top">
     <div>
-        <dt>Star system</dt>
-        <dd><a href="{{ planet.system.get_absolute_url }}">{{ planet.system }}</a></dd>
-    </div>
-    <div>
-        <dt>Mass</dt>
-        <dd>{% if planet.mass_earth is not None %}{{ planet.mass_earth|floatformat:"-3g" }} M⊕{% else %}—{% endif %}</dd>
-    </div>
-    <div>
-        <dt>Radius</dt>
-        <dd>{% if planet.radius_earth is not None %}{{ planet.radius_earth|floatformat:"-3g" }} R⊕{% else %}—{% endif %}</dd>
-    </div>
-    <div>
-        <dt>Orbital period</dt>
-        <dd>{% if planet.orbital_period_days is not None %}{{ planet.orbital_period_days|floatformat:"-2g" }} days{% else %}—{% endif %}</dd>
-    </div>
-    {% include 'catalog/_coordinates.html' with obj=planet %}
-</dl>
+        <dl class="facts">
+            <div>
+                <dt>Star system</dt>
+                <dd><a href="{{ planet.system.get_absolute_url }}">{{ planet.system }}</a></dd>
+            </div>
+            <div>
+                <dt>Mass</dt>
+                <dd>{% if planet.mass_earth is not None %}{{ planet.mass_earth|floatformat:"-3g" }} M⊕{% else %}—{% endif %}</dd>
+            </div>
+            <div>
+                <dt>Radius</dt>
+                <dd>{% if planet.radius_earth is not None %}{{ planet.radius_earth|floatformat:"-3g" }} R⊕{% else %}—{% endif %}</dd>
+            </div>
+            <div>
+                <dt>Orbital period</dt>
+                <dd>{% if planet.orbital_period_days is not None %}{{ planet.orbital_period_days|floatformat:"-2g" }} days{% else %}—{% endif %}</dd>
+            </div>
+            {% include 'catalog/_coordinates.html' with obj=planet %}
+        </dl>
 
-{% if planet.description %}
-    <p class="description">{{ planet.description|linebreaksbr }}</p>
-{% endif %}
+        {% if planet.description %}
+            <p class="description">{{ planet.description|linebreaksbr }}</p>
+        {% endif %}
+    </div>
+    {% include 'catalog/_image.html' with obj=planet %}
+</div>
 
 <div class="grid-2">
     <section class="card">

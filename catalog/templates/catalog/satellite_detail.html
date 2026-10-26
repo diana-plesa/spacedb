@@ -13,19 +13,24 @@
     </div>
 </div>
 
-<dl class="facts">
+<div class="detail-top">
     <div>
-        <dt>Orbits</dt>
-        <dd><a href="{{ satellite.planet.get_absolute_url }}">{{ satellite.planet }}</a></dd>
-    </div>
-    <div>
-        <dt>Kind</dt>
-        <dd>{{ satellite.get_kind_display }}</dd>
-    </div>
-    {% include 'catalog/_coordinates.html' with obj=satellite %}
-</dl>
+        <dl class="facts">
+            <div>
+                <dt>Orbits</dt>
+                <dd><a href="{{ satellite.planet.get_absolute_url }}">{{ satellite.planet }}</a></dd>
+            </div>
+            <div>
+                <dt>Kind</dt>
+                <dd>{{ satellite.get_kind_display }}</dd>
+            </div>
+            {% include 'catalog/_coordinates.html' with obj=satellite %}
+        </dl>
 
-{% if satellite.description %}
-    <p class="description">{{ satellite.description|linebreaksbr }}</p>
-{% endif %}
+        {% if satellite.description %}
+            <p class="description">{{ satellite.description|linebreaksbr }}</p>
+        {% endif %}
+    </div>
+    {% include 'catalog/_image.html' with obj=satellite %}
+</div>
 {% endblock %}

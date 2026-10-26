@@ -7,13 +7,13 @@
     <title>{% block title %}Home{% endblock %} · spacedb</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..800,0..100,0..1;1,9..144,400..800,0..100,0..1&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap">
     <link rel="stylesheet" href="{% static 'catalog/css/style.css' %}">
 </head>
 <body>
     <header class="site-header">
         <nav class="nav container">
-            <a class="brand" href="{% url 'home' %}">✦ spacedb</a>
+            <a class="brand" href="{% url 'home' %}">spacedb</a>
             {# url_name is e.g. 'star_detail'; the trailing underscore keeps 'star_' from matching 'starsystem_' #}
             {% with current=request.resolver_match.url_name %}
             <ul class="nav-links">
@@ -41,7 +41,7 @@
     </main>
 
     <footer class="site-footer container">
-        spacedb · a catalog of the universe
+        spacedb · database for your space exploration · pictures from Wikimedia Commons
     </footer>
 
     <script src="{% static 'catalog/js/search.js' %}"></script>

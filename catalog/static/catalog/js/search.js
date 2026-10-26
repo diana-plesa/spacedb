@@ -37,7 +37,14 @@
         }
         for (const item of items) {
             // textContent (not innerHTML) so names are shown as text, never run as HTML
+            const thumb = document.createElement(item.image_url ? 'img' : 'span');
+            thumb.className = item.image_url ? 'thumb' : 'thumb thumb-empty';
+            if (item.image_url) {
+                thumb.src = item.image_url;
+                thumb.alt = '';
+            }
             const name = document.createElement('span');
+            name.className = 'search-name';
             name.textContent = item.name;
             const type = document.createElement('span');
             type.className = 'search-type';
@@ -45,7 +52,7 @@
 
             const link = document.createElement('a');
             link.href = item.url;
-            link.append(name, type);
+            link.append(thumb, name, type);
 
             const li = document.createElement('li');
             li.appendChild(link);

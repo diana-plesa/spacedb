@@ -27,7 +27,7 @@
             <tbody>
                 {% for star in stars %}
                     <tr data-category="{% if star.spectral_type %}Class {{ star.spectral_type|slice:':1' }}{% endif %}">
-                        <td><a href="{{ star.get_absolute_url }}">{{ star.name }}</a></td>
+                        <td><div class="name-cell">{% include 'catalog/_thumb.html' with obj=star %}<a href="{{ star.get_absolute_url }}">{{ star.name }}</a></div></td>
                         <td><a href="{{ star.system.get_absolute_url }}">{{ star.system }}</a></td>
                         <td>{% if star.spectral_type %}<span class="badge">{{ star.spectral_type }}</span>{% else %}—{% endif %}</td>
                         <td class="num">{{ star.mass_solar|floatformat:"-2g"|default:"—" }}</td>

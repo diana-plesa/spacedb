@@ -27,7 +27,7 @@
             <tbody>
                 {% for system in systems %}
                     <tr data-category="{{ system.galaxy }}">
-                        <td><a href="{{ system.get_absolute_url }}">{{ system.name }}</a></td>
+                        <td><div class="name-cell">{% include 'catalog/_thumb.html' with obj=system %}<a href="{{ system.get_absolute_url }}">{{ system.name }}</a></div></td>
                         <td><a href="{{ system.galaxy.get_absolute_url }}">{{ system.galaxy }}</a></td>
                         <td class="num">{{ system.distance_ly|floatformat:"-2g" }}</td>
                         <td class="num">{{ system.star_count }}</td>

@@ -1,0 +1,6 @@
+{# Small round picture for list rows: {% include 'catalog/_thumb.html' with obj=star %} #}
+{% if obj.image_url %}
+    <img class="thumb" src="{{ obj.image_url }}" alt="" loading="lazy">
+{% else %}
+    <span class="thumb thumb-empty"></span>
+{% endif %}

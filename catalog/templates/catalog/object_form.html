@@ -1,4 +1,5 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 
 {# Shared by the create and edit pages of every model. On edit pages `object` is set. #}
 
@@ -16,4 +17,8 @@
         <a class="btn" href="{% if object %}{{ object.get_absolute_url }}{% else %}{{ list_url }}{% endif %}">Cancel</a>
     </div>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'catalog/js/quasar-fields.js' %}"></script>
 {% endblock %}

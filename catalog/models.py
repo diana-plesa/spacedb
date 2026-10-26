@@ -1,6 +1,14 @@
+import re
+
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse
+
+# Finds the file name in a link to a Wikimedia Commons / Wikipedia file *page*, e.g.
+#   https://commons.wikimedia.org/wiki/File:Moon.jpg
+#   https://en.wikipedia.org/wiki/Moon#/media/File:Moon.jpg
+FILE_PAGE_PATTERN = re.compile(r'^https?://[^/]*(wikipedia|wikimedia)\.org/.*File:([^?#]+)')
 
 
 class CelestialObject(models.Model):
@@ -18,6 +26,14 @@ class CelestialObject(models.Model):
         validators=[MinValueValidator(-90), MaxValueValidator(90)],
         help_text="Declination in degrees (-90 to 90)",
     )
+    image_url = models.URLField(
+        max_length=500, blank=True, default='',
+        help_text="Link to a picture, e.g. from Wikimedia Commons",
+    )
+    image_source = models.URLField(
+        max_length=500, blank=True, default='',
+        help_text="Page that credits the picture's author and licence",
+    )
 
     class Meta:
         abstract = True
@@ -25,6 +41,17 @@ class CelestialObject(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        # Django calls clean() while validating forms (ours and the admin's), before saving.
+        # People usually paste the picture's web page rather than the picture itself, and a
+        # web page can't be shown in an <img>. Turn it into a direct link to the picture,
+        # and use the file's page (which names the author and licence) as the credit.
+        match = FILE_PAGE_PATTERN.match(self.image_url)
+        if match:
+            file_name = match.group(2)
+            self.image_url = f'https://commons.wikimedia.org/wiki/Special:FilePath/{file_name}?width=960'
+            self.image_source = f'https://commons.wikimedia.org/wiki/File:{file_name}'
 
     def get_absolute_url(self):
         # e.g. 'galaxy_detail' or 'starsystem_detail', matching the names in urls.py
@@ -88,3 +115,13 @@ class BlackHole(CelestialObject):
     mass_solar = models.FloatField(null=True, blank=True, help_text="Mass in solar masses")
     luminosity_solar = models.FloatField(null=True, blank=True, help_text="Quasars only: luminosity in solar luminosities")
     redshift = models.FloatField(null=True, blank=True, help_text="Quasars only: redshift (z)")
+
+    def clean(self):
+        super().clean()  # keep the picture-link fix from CelestialObject
+        if self.bh_type == 'quasar':
+            if self.redshift is None:
+                raise ValidationError({'redshift': 'A quasar needs a redshift.'})
+        else:
+            # Only quasars have these values; drop anything left over, e.g. after changing the type
+            self.luminosity_solar = None
+            self.redshift = None

@@ -11,8 +11,9 @@ It comes with real data (TRAPPIST-1's seven planets, Proxima Centauri b, Sagitta
 - **Live search** across all object types from the navigation bar, using a JSON endpoint and `fetch`.
 - **Instant filtering and sorting** on every list page, without reloading.
 - **Interactive sky map** built on [Aladin Lite](https://aladin.cds.unistra.fr/AladinLite/) over a real sky survey (DSS2). It has toggleable layers per object type, a click-to-fly object list, and a "View on sky map" link on every detail page.
+- Pictures from Wikimedia Commons for every seeded object, each credited with a link to its source page. You can add your own picture to any object through its form.
 - Django admin for all models, including inline editing of a star system's stars and planets.
-- A dark, responsive interface with no CSS framework.
+- A hand-made "old star atlas" design with no CSS framework: two typefaces (Fraunces and IBM Plex Mono), three colors, and a responsive layout.
 - Automated tests for the pages, forms, JSON endpoints and seed command.
 
 ## Tech stack
@@ -76,4 +77,4 @@ catalog/
 
 ## Data sources
 
-The seed data uses rounded published values from NASA, ESA, the NASA Exoplanet Archive and SIMBAD. Coordinates are J2000 right ascension and declination in degrees.
+The seed data uses rounded published values from NASA, ESA, the NASA Exoplanet Archive and SIMBAD. Coordinates are J2000 right ascension and declination in degrees. Pictures are loaded directly from Wikimedia Commons; each picture's author and licence are on the source page linked under it.

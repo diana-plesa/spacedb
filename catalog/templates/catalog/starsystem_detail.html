@@ -13,21 +13,26 @@
     </div>
 </div>
 
-<dl class="facts">
+<div class="detail-top">
     <div>
-        <dt>Galaxy</dt>
-        <dd><a href="{{ starsystem.galaxy.get_absolute_url }}">{{ starsystem.galaxy }}</a></dd>
-    </div>
-    <div>
-        <dt>Distance</dt>
-        <dd>{{ starsystem.distance_ly|floatformat:"-2g" }} ly</dd>
-    </div>
-    {% include 'catalog/_coordinates.html' with obj=starsystem %}
-</dl>
+        <dl class="facts">
+            <div>
+                <dt>Galaxy</dt>
+                <dd><a href="{{ starsystem.galaxy.get_absolute_url }}">{{ starsystem.galaxy }}</a></dd>
+            </div>
+            <div>
+                <dt>Distance</dt>
+                <dd>{{ starsystem.distance_ly|floatformat:"-2g" }} ly</dd>
+            </div>
+            {% include 'catalog/_coordinates.html' with obj=starsystem %}
+        </dl>
 
-{% if starsystem.description %}
-    <p class="description">{{ starsystem.description|linebreaksbr }}</p>
-{% endif %}
+        {% if starsystem.description %}
+            <p class="description">{{ starsystem.description|linebreaksbr }}</p>
+        {% endif %}
+    </div>
+    {% include 'catalog/_image.html' with obj=starsystem %}
+</div>
 
 <div class="grid-2">
     <section class="card">

@@ -13,21 +13,26 @@
     </div>
 </div>
 
-<dl class="facts">
+<div class="detail-top">
     <div>
-        <dt>Type</dt>
-        <dd>{{ galaxy.get_galaxy_type_display }}</dd>
-    </div>
-    <div>
-        <dt>Distance</dt>
-        <dd>{{ galaxy.distance_ly|floatformat:"0g" }} ly</dd>
-    </div>
-    {% include 'catalog/_coordinates.html' with obj=galaxy %}
-</dl>
+        <dl class="facts">
+            <div>
+                <dt>Type</dt>
+                <dd>{{ galaxy.get_galaxy_type_display }}</dd>
+            </div>
+            <div>
+                <dt>Distance</dt>
+                <dd>{{ galaxy.distance_ly|floatformat:"0g" }} ly</dd>
+            </div>
+            {% include 'catalog/_coordinates.html' with obj=galaxy %}
+        </dl>
 
-{% if galaxy.description %}
-    <p class="description">{{ galaxy.description|linebreaksbr }}</p>
-{% endif %}
+        {% if galaxy.description %}
+            <p class="description">{{ galaxy.description|linebreaksbr }}</p>
+        {% endif %}
+    </div>
+    {% include 'catalog/_image.html' with obj=galaxy %}
+</div>
 
 <div class="grid-2">
     <section class="card">

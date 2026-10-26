@@ -16,29 +16,34 @@
     </div>
 </div>
 
-<dl class="facts">
+<div class="detail-top">
     <div>
-        <dt>Galaxy</dt>
-        <dd><a href="{{ blackhole.galaxy.get_absolute_url }}">{{ blackhole.galaxy }}</a></dd>
-    </div>
-    <div>
-        <dt>Mass</dt>
-        <dd>{% if blackhole.mass_solar is not None %}{{ blackhole.mass_solar|floatformat:"-2g" }} M☉{% else %}—{% endif %}</dd>
-    </div>
-    {% if blackhole.bh_type == 'quasar' %}
-        <div>
-            <dt>Luminosity</dt>
-            <dd>{% if blackhole.luminosity_solar is not None %}{{ blackhole.luminosity_solar|floatformat:"-2g" }} L☉{% else %}—{% endif %}</dd>
-        </div>
-        <div>
-            <dt>Redshift</dt>
-            <dd>z = {{ blackhole.redshift|floatformat:"-3"|default:"—" }}</dd>
-        </div>
-    {% endif %}
-    {% include 'catalog/_coordinates.html' with obj=blackhole %}
-</dl>
+        <dl class="facts">
+            <div>
+                <dt>Galaxy</dt>
+                <dd><a href="{{ blackhole.galaxy.get_absolute_url }}">{{ blackhole.galaxy }}</a></dd>
+            </div>
+            <div>
+                <dt>Mass</dt>
+                <dd>{% if blackhole.mass_solar is not None %}{{ blackhole.mass_solar|floatformat:"-2g" }} M☉{% else %}—{% endif %}</dd>
+            </div>
+            {% if blackhole.bh_type == 'quasar' %}
+                <div>
+                    <dt>Luminosity</dt>
+                    <dd>{% if blackhole.luminosity_solar is not None %}{{ blackhole.luminosity_solar|floatformat:"-2g" }} L☉{% else %}—{% endif %}</dd>
+                </div>
+                <div>
+                    <dt>Redshift</dt>
+                    <dd>z = {{ blackhole.redshift|floatformat:"-3"|default:"—" }}</dd>
+                </div>
+            {% endif %}
+            {% include 'catalog/_coordinates.html' with obj=blackhole %}
+        </dl>
 
-{% if blackhole.description %}
-    <p class="description">{{ blackhole.description|linebreaksbr }}</p>
-{% endif %}
+        {% if blackhole.description %}
+            <p class="description">{{ blackhole.description|linebreaksbr }}</p>
+        {% endif %}
+    </div>
+    {% include 'catalog/_image.html' with obj=blackhole %}
+</div>
 {% endblock %}

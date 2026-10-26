@@ -25,7 +25,7 @@
             <tbody>
                 {% for satellite in satellites %}
                     <tr data-category="{{ satellite.get_kind_display }}">
-                        <td><a href="{{ satellite.get_absolute_url }}">{{ satellite.name }}</a></td>
+                        <td><div class="name-cell">{% include 'catalog/_thumb.html' with obj=satellite %}<a href="{{ satellite.get_absolute_url }}">{{ satellite.name }}</a></div></td>
                         <td><a href="{{ satellite.planet.get_absolute_url }}">{{ satellite.planet }}</a></td>
                         <td><span class="badge">{{ satellite.get_kind_display }}</span></td>
                     </tr>

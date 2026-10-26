@@ -13,6 +13,195 @@ from django.db import transaction
 from catalog.models import Galaxy, StarSystem, Star, Planet, Satellite, BlackHole
 
 
+# Pictures from Wikipedia / Wikimedia Commons: object name -> (image URL, page with author and licence).
+# Objects with the same name in different tables (e.g. the Betelgeuse system and star) share a picture.
+IMAGES = {
+    'Milky Way': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/ESO-VLT-Laser-phot-33a-07.jpg/960px-ESO-VLT-Laser-phot-33a-07.jpg',
+        'https://commons.wikimedia.org/wiki/File:ESO-VLT-Laser-phot-33a-07.jpg'),
+    'Andromeda': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/M31-Andromede-16-09-2023-Hamois.jpg/960px-M31-Andromede-16-09-2023-Hamois.jpg',
+        'https://commons.wikimedia.org/wiki/File:M31-Andromede-16-09-2023-Hamois.jpg'),
+    'Triangulum Galaxy': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/6/64/VST_snaps_a_very_detailed_view_of_the_Triangulum_Galaxy.jpg/960px-VST_snaps_a_very_detailed_view_of_the_Triangulum_Galaxy.jpg',
+        'https://commons.wikimedia.org/wiki/File:VST_snaps_a_very_detailed_view_of_the_Triangulum_Galaxy.jpg'),
+    'Large Magellanic Cloud': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Eso1021d.jpg/960px-Eso1021d.jpg',
+        'https://commons.wikimedia.org/wiki/File:Eso1021d.jpg'),
+    'Small Magellanic Cloud': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg/960px-Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:Small_Magellanic_Cloud_%28Digitized_Sky_Survey_2%29.jpg'),
+    'Whirlpool Galaxy': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Messier51_sRGB.jpg/960px-Messier51_sRGB.jpg',
+        'https://commons.wikimedia.org/wiki/File:Messier51_sRGB.jpg'),
+    'Messier 87': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Messier_87_Hubble_WikiSky.jpg/960px-Messier_87_Hubble_WikiSky.jpg',
+        'https://commons.wikimedia.org/wiki/File:Messier_87_Hubble_WikiSky.jpg'),
+    'Centaurus A': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/ESO_Centaurus_A_LABOCA.jpg/960px-ESO_Centaurus_A_LABOCA.jpg',
+        'https://commons.wikimedia.org/wiki/File:ESO_Centaurus_A_LABOCA.jpg'),
+    '3C 273 host galaxy': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Best_image_of_bright_quasar_3C_273_%2810953173335%29.jpg/960px-Best_image_of_bright_quasar_3C_273_%2810953173335%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:Best_image_of_bright_quasar_3C_273_%2810953173335%29.jpg'),
+    'TON 618 host galaxy': (
+        'https://upload.wikimedia.org/wikipedia/commons/e/e1/TON_618_SDSS9_version_3.jpg',
+        'https://commons.wikimedia.org/wiki/File:TON_618_SDSS9_version_3.jpg'),
+    'Solar System': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Solar_System_True_Color_EN.png/960px-Solar_System_True_Color_EN.png',
+        'https://commons.wikimedia.org/wiki/File:Solar_System_True_Color_EN.png'),
+    'Alpha Centauri': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg/960px-The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg'),
+    'Sirius': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Sirius_A_and_B_artwork.jpg/960px-Sirius_A_and_B_artwork.jpg',
+        'https://commons.wikimedia.org/wiki/File:Sirius_A_and_B_artwork.jpg'),
+    'Betelgeuse': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Betelgeuse_captured_by_ALMA.jpg/960px-Betelgeuse_captured_by_ALMA.jpg',
+        'https://commons.wikimedia.org/wiki/File:Betelgeuse_captured_by_ALMA.jpg'),
+    '51 Pegasi': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dc/Wide-field_view_of_the_sky_around_the_star_51_Pegasi_%28eso1517c%29_%28cropped%29.jpg/960px-Wide-field_view_of_the_sky_around_the_star_51_Pegasi_%28eso1517c%29_%28cropped%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:Wide-field_view_of_the_sky_around_the_star_51_Pegasi_%28eso1517c%29_%28cropped%29.jpg'),
+    'Kepler-452': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Kepler-452b_System.jpg/960px-Kepler-452b_System.jpg',
+        'https://commons.wikimedia.org/wiki/File:Kepler-452b_System.jpg'),
+    'TRAPPIST-1': (
+        'https://upload.wikimedia.org/wikipedia/commons/a/a5/TRAPPIST-1_SDSS_2009-09-28_square_crop.png',
+        'https://commons.wikimedia.org/wiki/File:TRAPPIST-1_SDSS_2009-09-28_square_crop.png'),
+    'Sun': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/The_Sun_in_white_light.jpg/960px-The_Sun_in_white_light.jpg',
+        'https://commons.wikimedia.org/wiki/File:The_Sun_in_white_light.jpg'),
+    'Alpha Centauri A': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg/960px-The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg'),
+    'Alpha Centauri B': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/31/The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg/960px-The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:The_sky_around_Alpha_Centauri_and_Proxima_Centauri_%28eso1629i%29.jpg'),
+    'Proxima Centauri': (
+        'https://upload.wikimedia.org/wikipedia/commons/9/95/New_shot_of_Proxima_Centauri%2C_our_nearest_neighbour.jpg',
+        'https://commons.wikimedia.org/wiki/File:New_shot_of_Proxima_Centauri%2C_our_nearest_neighbour.jpg'),
+    'Sirius A': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Sirius_A_and_B_artwork.jpg/960px-Sirius_A_and_B_artwork.jpg',
+        'https://commons.wikimedia.org/wiki/File:Sirius_A_and_B_artwork.jpg'),
+    'Sirius B': (
+        'https://upload.wikimedia.org/wikipedia/commons/1/18/Sirius_A_and_B_Hubble_photo.editted.PNG',
+        'https://commons.wikimedia.org/wiki/File:Sirius_A_and_B_Hubble_photo.editted.PNG'),
+    'Mercury': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Mercury_in_true_color.jpg/960px-Mercury_in_true_color.jpg',
+        'https://commons.wikimedia.org/wiki/File:Mercury_in_true_color.jpg'),
+    'Venus': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Venus_from_Mariner_10.jpg/960px-Venus_from_Mariner_10.jpg',
+        'https://commons.wikimedia.org/wiki/File:Venus_from_Mariner_10.jpg'),
+    'Earth': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/Meteosat-12-fci-march-equinox-2025-noon.jpg/960px-Meteosat-12-fci-march-equinox-2025-noon.jpg',
+        'https://commons.wikimedia.org/wiki/File:Meteosat-12-fci-march-equinox-2025-noon.jpg'),
+    'Mars': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png/960px-Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png',
+        'https://commons.wikimedia.org/wiki/File:Mars_-_August_30_2021_-_Flickr_-_Kevin_M._Gill.png'),
+    'Jupiter': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Jupiter_OPAL_2024.png/960px-Jupiter_OPAL_2024.png',
+        'https://commons.wikimedia.org/wiki/File:Jupiter_OPAL_2024.png'),
+    'Saturn': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Saturn_global_view_from_Cassini%2C_rings_open_Better_Colour.png/960px-Saturn_global_view_from_Cassini%2C_rings_open_Better_Colour.png',
+        'https://commons.wikimedia.org/wiki/File:Saturn_global_view_from_Cassini%2C_rings_open_Better_Colour.png'),
+    'Uranus': (
+        'https://upload.wikimedia.org/wikipedia/commons/6/69/Uranus_Voyager2_color_calibrated.png',
+        'https://commons.wikimedia.org/wiki/File:Uranus_Voyager2_color_calibrated.png'),
+    'Neptune': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Neptune_Voyager2_color_calibrated.png/960px-Neptune_Voyager2_color_calibrated.png',
+        'https://commons.wikimedia.org/wiki/File:Neptune_Voyager2_color_calibrated.png'),
+    'Proxima Centauri b': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Artist%E2%80%99s_impression_of_Proxima_Centauri_b_shown_hypothetically_as_an_arid_rocky_super-earth.jpg/960px-Artist%E2%80%99s_impression_of_Proxima_Centauri_b_shown_hypothetically_as_an_arid_rocky_super-earth.jpg',
+        'https://commons.wikimedia.org/wiki/File:Artist%E2%80%99s_impression_of_Proxima_Centauri_b_shown_hypothetically_as_an_arid_rocky_super-earth.jpg'),
+    '51 Pegasi b': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Artist_impression_of_the_exoplanet_51_Pegasi_b.jpg/960px-Artist_impression_of_the_exoplanet_51_Pegasi_b.jpg',
+        'https://commons.wikimedia.org/wiki/File:Artist_impression_of_the_exoplanet_51_Pegasi_b.jpg'),
+    'Kepler-452b': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Kepler-452b_artist_concept.jpg/960px-Kepler-452b_artist_concept.jpg',
+        'https://commons.wikimedia.org/wiki/File:Kepler-452b_artist_concept.jpg'),
+    'TRAPPIST-1b': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/TRAPPIST-1_b_comparison.png/960px-TRAPPIST-1_b_comparison.png',
+        'https://commons.wikimedia.org/wiki/File:TRAPPIST-1_b_comparison.png'),
+    'TRAPPIST-1c': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Rocky_Exoplanet_TRAPPIST-1_c_%28Artist_Concept%29.jpg/960px-Rocky_Exoplanet_TRAPPIST-1_c_%28Artist_Concept%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:Rocky_Exoplanet_TRAPPIST-1_c_%28Artist_Concept%29.jpg'),
+    'TRAPPIST-1d': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Artist_impression_of_TRAPPIST-1_d.jpg/960px-Artist_impression_of_TRAPPIST-1_d.jpg',
+        'https://commons.wikimedia.org/wiki/File:Artist_impression_of_TRAPPIST-1_d.jpg'),
+    'TRAPPIST-1e': (
+        'https://upload.wikimedia.org/wikipedia/commons/3/38/TRAPPIST-1e_artist_impression_2018.png',
+        'https://commons.wikimedia.org/wiki/File:TRAPPIST-1e_artist_impression_2018.png'),
+    'TRAPPIST-1f': (
+        'https://upload.wikimedia.org/wikipedia/commons/8/84/TRAPPIST-1f_artist_impression_2018.png',
+        'https://commons.wikimedia.org/wiki/File:TRAPPIST-1f_artist_impression_2018.png'),
+    'TRAPPIST-1g': (
+        'https://upload.wikimedia.org/wikipedia/commons/5/54/TRAPPIST-1g_artist_impression_2018.png',
+        'https://commons.wikimedia.org/wiki/File:TRAPPIST-1g_artist_impression_2018.png'),
+    'TRAPPIST-1h': (
+        'https://upload.wikimedia.org/wikipedia/commons/0/03/TRAPPIST-1h_artist_impression_2018.png',
+        'https://commons.wikimedia.org/wiki/File:TRAPPIST-1h_artist_impression_2018.png'),
+    'Moon': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/960px-FullMoon2010.jpg',
+        'https://commons.wikimedia.org/wiki/File:FullMoon2010.jpg'),
+    'International Space Station': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/The_station_pictured_from_the_SpaceX_Crew_Dragon_5.jpg/960px-The_station_pictured_from_the_SpaceX_Crew_Dragon_5.jpg',
+        'https://commons.wikimedia.org/wiki/File:The_station_pictured_from_the_SpaceX_Crew_Dragon_5.jpg'),
+    'Hubble Space Telescope': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Hubble_2009_close-up_2.jpg/960px-Hubble_2009_close-up_2.jpg',
+        'https://commons.wikimedia.org/wiki/File:Hubble_2009_close-up_2.jpg'),
+    'Phobos': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Phobos_colour_2008.jpg/960px-Phobos_colour_2008.jpg',
+        'https://commons.wikimedia.org/wiki/File:Phobos_colour_2008.jpg'),
+    'Deimos': (
+        'https://upload.wikimedia.org/wikipedia/commons/8/86/NASA-Deimos-MarsMoon-20090221.jpg',
+        'https://commons.wikimedia.org/wiki/File:NASA-Deimos-MarsMoon-20090221.jpg'),
+    'Io': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Io_highest_resolution_natural_color.png/960px-Io_highest_resolution_natural_color.png',
+        'https://commons.wikimedia.org/wiki/File:Io_highest_resolution_natural_color.png'),
+    'Europa': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Europa_-_Perijove_45_%28cropped%29.png/960px-Europa_-_Perijove_45_%28cropped%29.png',
+        'https://commons.wikimedia.org/wiki/File:Europa_-_Perijove_45_%28cropped%29.png'),
+    'Ganymede': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/Ganymede_-_Perijove_34_Composite.png/960px-Ganymede_-_Perijove_34_Composite.png',
+        'https://commons.wikimedia.org/wiki/File:Ganymede_-_Perijove_34_Composite.png'),
+    'Callisto': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Callisto_VGR2_C2060635_OGB.png/960px-Callisto_VGR2_C2060635_OGB.png',
+        'https://commons.wikimedia.org/wiki/File:Callisto_VGR2_C2060635_OGB.png'),
+    'Titan': (
+        'https://upload.wikimedia.org/wikipedia/commons/f/fe/Titan_in_true_color_by_Kevin_M._Gill.jpg',
+        'https://commons.wikimedia.org/wiki/File:Titan_in_true_color_by_Kevin_M._Gill.jpg'),
+    'Enceladus': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/PIA17202_-_Approaching_Enceladus.jpg/960px-PIA17202_-_Approaching_Enceladus.jpg',
+        'https://commons.wikimedia.org/wiki/File:PIA17202_-_Approaching_Enceladus.jpg'),
+    'Triton': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Triton-usgs23-with-frame.jpg/960px-Triton-usgs23-with-frame.jpg',
+        'https://commons.wikimedia.org/wiki/File:Triton-usgs23-with-frame.jpg'),
+    'Sagittarius A*': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/EHT_Saggitarius_A_black_hole.tif/lossy-page1-960px-EHT_Saggitarius_A_black_hole.tif.jpg',
+        'https://commons.wikimedia.org/wiki/File:EHT_Saggitarius_A_black_hole.tif'),
+    'Cygnus X-1': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Cygnus_X-1.png/960px-Cygnus_X-1.png',
+        'https://commons.wikimedia.org/wiki/File:Cygnus_X-1.png'),
+    'Gaia BH1': (
+        'https://upload.wikimedia.org/wikipedia/commons/d/d2/Gaia_BH1_PanSTARRS.jpg',
+        'https://commons.wikimedia.org/wiki/File:Gaia_BH1_PanSTARRS.jpg'),
+    'M31*': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/M31-Andromede-16-09-2023-Hamois.jpg/960px-M31-Andromede-16-09-2023-Hamois.jpg',
+        'https://commons.wikimedia.org/wiki/File:M31-Andromede-16-09-2023-Hamois.jpg'),
+    'M87*': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/960px-Black_hole_-_Messier_87_crop_max_res.jpg',
+        'https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87_crop_max_res.jpg'),
+    'Centaurus A*': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/ESO_Centaurus_A_LABOCA.jpg/960px-ESO_Centaurus_A_LABOCA.jpg',
+        'https://commons.wikimedia.org/wiki/File:ESO_Centaurus_A_LABOCA.jpg'),
+    '3C 273': (
+        'https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Best_image_of_bright_quasar_3C_273_%2810953173335%29.jpg/960px-Best_image_of_bright_quasar_3C_273_%2810953173335%29.jpg',
+        'https://commons.wikimedia.org/wiki/File:Best_image_of_bright_quasar_3C_273_%2810953173335%29.jpg'),
+    'TON 618': (
+        'https://upload.wikimedia.org/wikipedia/commons/e/e1/TON_618_SDSS9_version_3.jpg',
+        'https://commons.wikimedia.org/wiki/File:TON_618_SDSS9_version_3.jpg'),
+}
+
+
 def upsert(model, name, **fields):
     obj, created = model.objects.get_or_create(name=name, defaults=fields)
     if not created:
@@ -195,6 +384,12 @@ class Command(BaseCommand):
         upsert(BlackHole, 'TON 618', galaxy=host_ton618, bh_type='quasar', mass_solar=4.07e10,
                luminosity_solar=4e14, redshift=2.219, ra_deg=187.1038, dec_deg=31.4772,
                description='A hyperluminous quasar powered by one of the most massive black holes known.')
+
+        # ---------- Pictures (only for objects that don't have one yet) ----------
+        for model in [Galaxy, StarSystem, Star, Planet, Satellite, BlackHole]:
+            for obj in model.objects.filter(name__in=IMAGES, image_url=''):
+                obj.image_url, obj.image_source = IMAGES[obj.name]
+                obj.save()
 
         counts = ', '.join(f'{model.objects.count()} {model._meta.verbose_name_plural}'
                            for model in [Galaxy, StarSystem, Star, Planet, Satellite, BlackHole])

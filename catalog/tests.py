@@ -47,6 +47,25 @@ class CrudTests(TestCase):
         })
         self.assertContains(response, 'A quasar needs a redshift.')
 
+    def test_non_quasar_loses_quasar_fields(self):
+        self.client.post(reverse('blackhole_create'), {
+            'name': 'Cygnus X-1', 'galaxy': self.galaxy.pk, 'bh_type': 'stellar',
+            'redshift': '0.5', 'luminosity_solar': '1000',
+        })
+        black_hole = BlackHole.objects.get(name='Cygnus X-1')
+        self.assertIsNone(black_hole.redshift)
+        self.assertIsNone(black_hole.luminosity_solar)
+
+    def test_commons_file_page_becomes_direct_image_link(self):
+        self.client.post(reverse('galaxy_update', args=[self.galaxy.pk]), {
+            'name': 'Milky Way', 'galaxy_type': 'spiral', 'distance_ly': '26000',
+            'image_url': 'https://commons.wikimedia.org/wiki/File:Moon.jpg',
+        })
+        self.galaxy.refresh_from_db()
+        self.assertEqual(self.galaxy.image_url,
+                         'https://commons.wikimedia.org/wiki/Special:FilePath/Moon.jpg?width=960')
+        self.assertEqual(self.galaxy.image_source, 'https://commons.wikimedia.org/wiki/File:Moon.jpg')
+
     def test_deleting_galaxy_cascades(self):
         Planet.objects.create(name='Earth', system=self.system)
         self.client.post(reverse('galaxy_delete', args=[self.galaxy.pk]))

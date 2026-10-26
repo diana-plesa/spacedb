@@ -2,11 +2,18 @@
 
 {% block content %}
 <section class="hero">
-    <h1>A catalog of the universe</h1>
-    <p class="lead">Browse galaxies, star systems, stars, planets, satellites and black holes, with real sky coordinates.</p>
-    <div class="actions">
-        <a class="btn btn-primary" href="{% url 'galaxy_list' %}">Explore galaxies</a>
-        <a class="btn" href="{% url 'sky_map' %}">Open the sky map</a>
+    <div>
+        <h1>A small catalogue of a <em>very</em> big universe</h1>
+        <p class="lead">Galaxies, stars, planets, moons and black holes, each one pinned to its real place in the night sky.</p>
+        <div class="actions">
+            <a class="btn btn-primary" href="{% url 'galaxy_list' %}">Start with galaxies</a>
+            <a class="btn" href="{% url 'sky_map' %}">Open the sky map</a>
+        </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+        <div class="planet"></div>
+        <div class="ring"></div>
+        <div class="moon"></div>
     </div>
 </section>
 
@@ -18,4 +25,18 @@
         </a>
     {% endfor %}
 </div>
+
+{% if featured %}
+    <h2 class="section-title">From the archive</h2>
+    <div class="gallery">
+        {% for obj, type_label in featured %}
+            <a href="{{ obj.get_absolute_url }}">
+                <figure class="polaroid">
+                    <img src="{{ obj.image_url }}" alt="{{ obj.name }}" loading="lazy">
+                    <figcaption>{{ obj.name }}<span>{{ type_label }}</span></figcaption>
+                </figure>
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
 {% endblock %}

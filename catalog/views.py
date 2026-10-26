@@ -8,6 +8,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Galaxy, StarSystem, Star, Planet, Satellite, BlackHole
 from .forms import GalaxyForm, StarSystemForm, StarForm, PlanetForm, SatelliteForm, BlackHoleForm
 
+ALL_MODELS = [Galaxy, StarSystem, Star, Planet, Satellite, BlackHole]
+
 
 def home(request):
     counts = [
@@ -18,7 +20,13 @@ def home(request):
         ('Satellites', Satellite.objects.count(), 'satellite_list'),
         ('Black holes', BlackHole.objects.count(), 'blackhole_list'),
     ]
-    return render(request, 'catalog/home.html', {'counts': counts})
+    # One random pictured object of each type; a different set on every visit
+    featured = []
+    for model in ALL_MODELS:
+        obj = model.objects.exclude(image_url='').order_by('?').first()
+        if obj is not None:
+            featured.append((obj, model._meta.verbose_name.capitalize()))
+    return render(request, 'catalog/home.html', {'counts': counts, 'featured': featured})
 
 
 def sky_map(request):
@@ -26,8 +34,6 @@ def sky_map(request):
 
 
 # ---------- JSON endpoints used by the JavaScript on the pages ----------
-
-ALL_MODELS = [Galaxy, StarSystem, Star, Planet, Satellite, BlackHole]
 
 
 def api_search(request):
@@ -41,6 +47,7 @@ def api_search(request):
                     'name': obj.name,
                     'type': model._meta.verbose_name.capitalize(),
                     'url': obj.get_absolute_url(),
+                    'image_url': obj.image_url,
                 })
     return JsonResponse({'results': results[:12]})
 
@@ -58,6 +65,7 @@ def api_sky_objects(request):
                 'ra': obj.ra_deg,
                 'dec': obj.dec_deg,
                 'url': obj.get_absolute_url(),
+                'image_url': obj.image_url,
             })
     return JsonResponse({'objects': objects})
 

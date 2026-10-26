@@ -1,13 +1,15 @@
 // Dynamic element 3: interactive sky map.
 // Aladin Lite (from the CDS in Strasbourg) shows a real survey of the sky. We load our
-// objects from Django's JSON endpoint and draw each type as its own colored layer.
-const LAYER_COLORS = {
-    galaxy: '#7c8cff',
-    starsystem: '#5ee1e6',
-    star: '#ffd166',
-    planet: '#06d6a0',
-    satellite: '#d0d4e4',
-    blackhole: '#ff6b81',
+// objects from Django's JSON endpoint and draw each type as its own layer.
+// Every layer uses the site's accent color; the marker shape tells the types apart.
+const MARKER_COLOR = '#e4572e';
+const LAYER_SHAPES = {
+    galaxy: { shape: 'circle', symbol: '○' },
+    starsystem: { shape: 'rhomb', symbol: '◇' },
+    star: { shape: 'plus', symbol: '+' },
+    planet: { shape: 'square', symbol: '□' },
+    satellite: { shape: 'cross', symbol: '×' },
+    blackhole: { shape: 'triangle', symbol: '△' },
 };
 
 const mapDiv = document.getElementById('aladin-lite-div');
@@ -40,9 +42,9 @@ async function setUpMap() {
         if (!layers[obj.kind]) {
             const catalog = A.catalog({
                 name: obj.kind_label_plural,
-                color: LAYER_COLORS[obj.kind],
+                color: MARKER_COLOR,
                 sourceSize: 16,
-                shape: 'circle',
+                shape: LAYER_SHAPES[obj.kind].shape,
             });
             aladin.addCatalog(catalog);
             layers[obj.kind] = { catalog: catalog, label: obj.kind_label_plural, count: 0 };
@@ -74,7 +76,7 @@ function buildLayerToggles(layers) {
 
         const swatch = document.createElement('span');
         swatch.className = 'swatch';
-        swatch.style.background = LAYER_COLORS[kind];
+        swatch.textContent = LAYER_SHAPES[kind].symbol;
 
         const label = document.createElement('label');
         label.className = 'layer-toggle';
@@ -92,8 +94,7 @@ function buildObjectList(aladin, objects) {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'sky-object';
-        button.style.borderLeftColor = LAYER_COLORS[obj.kind];
-        button.textContent = obj.name;
+        button.textContent = LAYER_SHAPES[obj.kind].symbol + '  ' + obj.name;
         button.addEventListener('click', function () {
             aladin.setProjection('SIN');
             aladin.gotoRaDec(obj.ra, obj.dec);
@@ -108,6 +109,9 @@ function buildObjectList(aladin, objects) {
 }
 
 function showInfo(obj) {
+    const image = document.getElementById('sky-info-image');
+    image.hidden = !obj.image_url;
+    if (obj.image_url) image.src = obj.image_url;
     document.getElementById('sky-info-name').textContent = obj.name;
     document.getElementById('sky-info-type').textContent = obj.kind_label;
     document.getElementById('sky-info-coords').textContent =

@@ -25,7 +25,7 @@
             <tbody>
                 {% for galaxy in galaxies %}
                     <tr data-category="{{ galaxy.get_galaxy_type_display }}">
-                        <td><a href="{% url 'galaxy_detail' galaxy.pk %}">{{ galaxy.name }}</a></td>
+                        <td><div class="name-cell">{% include 'catalog/_thumb.html' with obj=galaxy %}<a href="{% url 'galaxy_detail' galaxy.pk %}">{{ galaxy.name }}</a></div></td>
                         <td><span class="badge">{{ galaxy.get_galaxy_type_display }}</span></td>
                         <td class="num">{{ galaxy.distance_ly|floatformat:"0g" }}</td>
                     </tr>

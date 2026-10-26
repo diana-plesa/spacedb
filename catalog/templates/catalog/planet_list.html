@@ -28,7 +28,7 @@
             <tbody>
                 {% for planet in planets %}
                     <tr data-category="{% if planet.is_exoplanet %}Exoplanet{% else %}Solar System{% endif %}">
-                        <td><a href="{{ planet.get_absolute_url }}">{{ planet.name }}</a></td>
+                        <td><div class="name-cell">{% include 'catalog/_thumb.html' with obj=planet %}<a href="{{ planet.get_absolute_url }}">{{ planet.name }}</a></div></td>
                         <td><a href="{{ planet.system.get_absolute_url }}">{{ planet.system }}</a></td>
                         <td>{% if planet.is_exoplanet %}<span class="badge badge-exo">Exoplanet</span>{% else %}<span class="badge">Solar System</span>{% endif %}</td>
                         <td class="num">{{ planet.mass_earth|floatformat:"-3g"|default:"—" }}</td>
